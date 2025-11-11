@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar Example</title>
+    <style>
+        /* General Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Navbar Styles */
+        header {
+            background-color: #007bff; /* Blue background */
+            padding: 10px 20px; /* Padding around the navbar */
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .Christologo {
+            height: 60px; /* Logo height */
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 20px; /* Space between icons */
+        }
+
+        .nav-link {
+            display: flex; /* Make the link a flex container */
+            align-items: center; /* Center icon vertically */
+            text-decoration: none; /* Remove underline */
+            transition: transform 0.2s; /* Animation on hover */
+        }
+
+        .icon {
+            width: 25px; /* Icon size */
+            height: 25px; /* Icon size */
+            filter: brightness(0) invert(1); /* White icon color */
+        }
+
+        .nav-link:hover {
+            transform: scale(1.1); /* Slightly enlarge icon on hover */
+        }
+
+        .nav-link.active .icon {
+           filter: brightness(0) saturate(100%) invert(76%) sepia(94%) saturate(6041%) hue-rotate(200deg) brightness(104%) contrast(103%);
+        }
+
+
+        @media (max-width: 600px) {
+            .container {
+                width: 100%;
+            }
+        }
+
+    </style>
+</head>
+<body>
+  <header>
+    <div class="navbar">
+      <div class="nav-icons">
+        <!-- Home Link (Assuming you have a route like @Controller('laundromart-app/home')) -->
+        <a href="/laundromart/auth/home" class="nav-link">
+          <img src="/icons/home_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" alt="Home" class="icon">
+        </a>
+
+        <!-- Notification Link (Controller: @Controller('notification') becomes /laundromart-app/notification) -->
+        <a href="/laundromart/order/notification" class="nav-link">
+          <img src="/icons/notifications_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" alt="Notification" class="icon">
+        </a>
+
+        <!-- Profile Link (Controller: @Controller('profile') becomes /laundromart-app/profile) -->
+        <a href="/laundromart/auth/profile" class="nav-link">
+          <img src="/icons/person_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" alt="Profile" class="icon">
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <script>
+  const currentPath = window.location.pathname;
+  document.querySelectorAll('.nav-link').forEach(link => {
+    if (currentPath === link.getAttribute('href')) {
+      link.classList.add('active');
+    }
+  });
+</script>
+
+</body>
+</html>
+

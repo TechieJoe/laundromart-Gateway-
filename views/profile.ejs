@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile</title>
+
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f0f0f0; }
+    .container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; }
+    img { width: 150px; height: 150px; object-fit: cover; border-radius: 50%; border: 2px solid #007bff; margin-bottom: 20px; }
+    .form-group { margin-bottom: 15px; position: relative; }
+    .editable { display: inline-block; width: calc(100% - 40px); padding: 8px; border-radius: 5px; border: 1px solid #ccc; background: #f9f9f9; }
+    .edit-icon { cursor: pointer; color: #007bff; position: absolute; top: 35px; right: 5px; font-size: 18px; }
+    .save-btn { display: none; margin-top: 5px; }
+    button { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+  </style>
+</head>
+<body>
+
+  <%- include('navBar') %>
+
+  <div class="container">
+    <h1>Your Profile</h1>
+
+    <!-- Profile Picture -->
+    <img id="profilePicture" src="<%= user.profilePicture %>" alt="Profile Picture" />
+
+    <!-- ✅ One Single Form for Everything -->
+    <form id="profileForm" enctype="multipart/form-data">
+      
+      <!-- Upload New Picture -->
+      <input type="file" id="imageInput" name="image" accept="image/*" />
+
+      <hr>
+
+      <!-- Name -->
+      <div class="form-group">
+        <label>Name</label>
+        <span class="editable" id="nameDisplay"><%= user.name %></span>
+        <input type="text" id="nameInput" name="name" style="display:none;" />
+        <span class="edit-icon" onclick="editField('name')">✎</span>
+        <button class="save-btn" id="nameSaveBtn" type="button" onclick="saveField('name')">Save</button>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label>Email</label>
+        <span class="editable" id="emailDisplay"><%= user.email %></span>
+        <input type="email" id="emailInput" name="email" style="display:none;" />
+        <span class="edit-icon" onclick="editField('email')">✎</span>
+        <button class="save-btn" id="emailSaveBtn" type="button" onclick="saveField('email')">Save</button>
+      </div>
+
+      <button type="submit">Save Changes</button>
+    </form>
+
+    <hr>
+
+    <form action="/laundromart/auth/logout" method="POST">
+      <button type="submit">Logout</button>
+    </form>
+  </div>
+
+  <script>
+    // Preview new image before upload
+    const imageInput = document.getElementById('imageInput');
+    const profilePicture = document.getElementById('profilePicture');
+
+    imageInput.onchange = e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => profilePicture.src = ev.target.result;
+      reader.readAsDataURL(file);
+    };
+
+    // Editable field handler
+    function editField(field) {
+      document.getElementById(field + 'Display').style.display = 'none';
+      document.getElementById(field + 'Input').style.display = 'inline-block';
+      document.getElementById(field + 'SaveBtn').style.display = 'inline-block';
+      document.getElementById(field + 'Input').value = document.getElementById(field + 'Display').textContent;
+    }
+    
+    function saveField(field) {
+      document.getElementById(field + 'Display').textContent = document.getElementById(field + 'Input').value;
+      document.getElementById(field + 'Input').style.display = 'none';
+      document.getElementById(field + 'SaveBtn').style.display = 'none';
+      document.getElementById(field + 'Display').style.display = 'inline-block';
+    }
+
+    // ✅ Submit All (text + picture) to ONE route
+    profileForm.onsubmit = async e => {
+      e.preventDefault();
+
+      const formData = new FormData(profileForm);
+      formData.set('name', document.getElementById('nameDisplay').textContent);
+      formData.set('email', document.getElementById('emailDisplay').textContent);
+
+     fetch('http://localhost:3000/laundromart/auth/update-profile', {
+      method: 'POST',
+      credentials: 'include',  // <--- THIS IS THE FIX
+      headers: {
+        'Content-Type': 'application/json'
+   },
+    body: JSON.stringify({
+      name,
+      email
+     })
+  })
+
+      const result = await response.json();
+      alert(result.message);
+      location.reload();
+    };
+  </script>
+
+</body>
+</html>

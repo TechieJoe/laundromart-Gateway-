@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Notifications</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-blue: #007bff;
+      --light-blue: #e3f2fd;
+      --dark-blue: #0056b3;
+      --white: #ffffff;
+      --light-gray: #f8f9fa;
+      --medium-gray: #e9ecef;
+      --dark-gray: #6c757d;
+      --text-dark: #333333;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --radius: 10px;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light-gray);
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--medium-gray);
+    }
+    
+    h1 {
+      color: var(--primary-blue);
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+    
+    .notifications-container {
+      background-color: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    
+    .notification-list {
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    
+    .notification-item {
+      padding: 20px;
+      border-bottom: 1px solid var(--medium-gray);
+      transition: all 0.2s ease;
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .notification-item:last-child {
+      border-bottom: none;
+    }
+    
+    .notification-item:hover {
+      background-color: var(--light-gray);
+    }
+    
+    .notification-item.unread {
+      background-color: var(--light-blue);
+    }
+    
+    .notification-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    
+    .notification-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .notification-title i {
+      color: var(--primary-blue);
+    }
+    
+    .notification-date {
+      font-size: 0.85rem;
+      color: var(--dark-gray);
+      white-space: nowrap;
+    }
+    
+    .notification-content {
+      color: var(--text-dark);
+      margin-bottom: 10px;
+    }
+    
+    .order-details {
+      background-color: var(--light-gray);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+      display: none;
+    }
+    
+    .notification-item.expanded .order-details {
+      display: block;
+    }
+    
+    .order-details h4 {
+      margin-bottom: 10px;
+      color: var(--dark-blue);
+      font-size: 1rem;
+    }
+    
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--medium-gray);
+    }
+    
+    .order-item:last-child {
+      border-bottom: none;
+    }
+    
+    .order-info {
+      flex: 1;
+    }
+    
+    .order-name {
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+    
+    .order-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin: 5px 0;
+    }
+    
+    .action-tag {
+      background-color: var(--primary-blue);
+      color: white;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+    }
+    
+    .order-price {
+      font-weight: 600;
+      color: var(--dark-blue);
+      text-align: right;
+    }
+    
+    .order-total {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      margin-top: 10px;
+      border-top: 1px solid var(--medium-gray);
+      font-weight: 600;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--dark-gray);
+    }
+    
+    .empty-state i {
+      font-size: 3rem;
+      color: var(--medium-gray);
+      margin-bottom: 15px;
+    }
+    
+    .empty-state h3 {
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    
+    .badge-primary {
+      background-color: var(--primary-blue);
+      color: white;
+    }
+    
+    .expand-icon {
+      margin-left: auto;
+      color: var(--dark-gray);
+      transition: transform 0.3s ease;
+    }
+    
+    .notification-item.expanded .expand-icon {
+      transform: rotate(180deg);
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .notification-header {
+        flex-direction: column;
+        gap: 5px;
+      }
+      
+      .notification-date {
+        align-self: flex-start;
+      }
+      
+      .order-item {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .order-price {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('navBar') %>
+
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-bell"></i> Notifications</h1>
+    </header>
+    
+    <div class="notifications-container">
+      <div class="notification-list">
+        <% if (notifications.length === 0) { %>
+          <div class="empty-state">
+            <i class="far fa-bell"></i>
+            <h3>No notifications yet</h3>
+            <p>When you have notifications, they'll appear here.</p>
+          </div>
+        <% } else { %>
+          <% notifications.forEach(notification => { %>
+            <div class="notification-item <%= notification.status === 'unread' ? 'unread' : '' %>">
+              <div class="notification-header">
+                <div class="notification-title">
+                  <i class="fas fa-shopping-cart"></i>
+                  <%= notification.message %>
+                  <% if (notification.status === 'unread') { %>
+                    <span class="badge badge-primary">New</span>
+                  <% } %>
+                </div>
+                <div class="notification-date"><%= new Date(notification.createdAt).toLocaleString() %></div>
+              </div>
+              
+              <div class="notification-content">
+                Click to view order details
+                <i class="fas fa-chevron-down expand-icon"></i>
+              </div>
+              
+              <% if (notification.metadata && notification.metadata.orders && notification.metadata.orders.length > 0) { %>
+                <div class="order-details">
+                  <h4>Order Details</h4>
+                  <% notification.metadata.orders.forEach(order => { %>
+                    <div class="order-item">
+                      <div class="order-info">
+                        <div class="order-name"><%= order.item %></div>
+                        <% if (order.action && order.action.length > 0) { %>
+                          <div class="order-actions">
+                            <% order.action.forEach(act => { %>
+                              <span class="action-tag"><%= act.type.toUpperCase() %> - ₦<%= act.price %></span>
+                            <% }) %>
+                          </div>
+                        <% } %>
+                        <div>Quantity: <%= order.quantity %></div>
+                      </div>
+                      <div class="order-price">₦<%= order.total %></div>
+                    </div>
+                  <% }) %>
+                  
+                  <% if (notification.metadata.grandTotal) { %>
+                    <div class="order-total">
+                      <span>Grand Total:</span>
+                      <span>₦<%= notification.metadata.grandTotal %></span>
+                    </div>
+                  <% } %>
+                </div>
+              <% } %>
+            </div>
+          <% }) %>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Add click functionality to expand/collapse notification details
+    document.querySelectorAll('.notification-item').forEach(item => {
+      item.addEventListener('click', function() {
+        // Toggle expanded class
+        this.classList.toggle('expanded');
+        
+        // If this notification was unread, mark it as read
+        if (this.classList.contains('unread')) {
+          this.classList.remove('unread');
+          
+          // Remove the "New" badge if present
+          const badge = this.querySelector('.badge');
+          if (badge) {
+            badge.remove();
+          }
+          
+          // In a real application, you would send an AJAX request to update the notification status
+          // const notificationId = this.getAttribute('data-id');
+          // fetch(`/notifications/${notificationId}/read`, { method: 'POST' })
+          //   .then(response => response.json())
+          //   .then(data => {
+          //     if (data.success) {
+          //       // Update UI as above
+          //     }
+          //   });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

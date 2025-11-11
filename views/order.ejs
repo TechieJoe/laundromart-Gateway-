@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Order Summary</title>
+  <style>
+    /* Keep your existing CSS */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .button-container {
+      margin-top: 20px;
+    }
+    .btn {
+      padding: 10px 20px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <%- include('navBar') %>
+
+  <h1>Order Summary</h1>
+  <table id="summaryTable">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Wash</th>
+        <th>Iron</th>
+        <th>Quantity</th>
+        <th>Total Price</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="button-container">
+    <button id="pay" class="btn">Pay</button>
+    <button id="cancel" class="btn">Cancel</button>
+  </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const summaryTable = document.querySelector('#summaryTable tbody');
+      let orderData;
+      try {
+        orderData = JSON.parse(sessionStorage.getItem('laundry-order')) || {};
+      } catch (error) {
+        alert('Invalid order data. Redirecting...');
+        window.location.href = '/laundromart/order/service';
+        return;
+      }
+
+      if (!orderData.orders || !orderData.orders.length) {
+        alert('No orders found. Redirecting...');
+        window.location.href = '/laundromart/order/service';
+        return;
+      }
+
+      // Calculate grandTotal if missing
+      if (!orderData.grandTotal) {
+        orderData.grandTotal = orderData.orders.reduce(
+          (sum, order) => sum + (order.total || 0), 0
+        );
+      }
+
+      // Fill table
+      orderData.orders.forEach(order => {
+        const row = document.createElement('tr');
+        const wash = order.action.find(a => a.type === 'wash');
+        const iron = order.action.find(a => a.type === 'iron');
+
+        row.innerHTML = `
+          <td>${order.item || 'N/A'}</td>
+          <td>${wash ? wash.price : ''}</td>
+          <td>${iron ? iron.price : ''}</td>
+          <td>${order.quantity || 0}</td>
+          <td>${order.total || 0}</td>
+        `;
+        summaryTable.appendChild(row);
+      });
+
+      console.log(orderData)
+
+      document.getElementById('pay').addEventListener('click', () => {
+  const orderData = JSON.parse(sessionStorage.getItem('laundry-order'));
+
+  // ✅ No need to manually check or send token
+  fetch('https://425n447r-3000.uks1.devtunnels.ms/laundromart/order/createOrder', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    credentials: 'include', // ✅ ensures cookies are sent
+    body: JSON.stringify(orderData) // ✅ send only order data
+  })
+    .then(async res => {
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || 'Failed to create order');
+      }
+      return res.json();
+    })
+    .then(data => {
+      if (data.authorizationUrl) {
+        sessionStorage.removeItem('laundry-order');
+        window.location.href = data.authorizationUrl;
+      } else {
+        alert('Failed to initialize payment');
+      }
+    })
+    .catch(err => alert(`Error: ${err.message}`));
+});
+
+      // Cancel button
+      document.getElementById('cancel').addEventListener('click', () => {
+        sessionStorage.removeItem('laundry-order');
+        window.location.href = 'laundromart/order/service';
+      });
+    });
+  </script>
+  </body>
+</html>
