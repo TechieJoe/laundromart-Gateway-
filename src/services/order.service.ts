@@ -59,9 +59,9 @@ export class OrderGatewayService {
     }
   }
 
-  /**
-   * Forward verify transaction request to microservice
-=  async verifyTransaction(reference: string) {
+   //test
+   // Forward verify transaction request to microservice
+  async verifyTransaction(reference: string) {
     this.logger.log(`🔎 Forwarding verify_transaction for ref=${reference}`);
     try {
       const response = await lastValueFrom(
@@ -74,9 +74,10 @@ export class OrderGatewayService {
     }
   }
 
-   */
 
 
+    /**
+      *live
 async verifyPayment(reference: string) {
     try {
       const response = await firstValueFrom(
@@ -102,8 +103,10 @@ async verifyPayment(reference: string) {
     }
   }
 
-  /**
-   * Forward webhook event to microservice
+   */
+
+   //test
+   // Forward webhook event to microservice
   async handleWebhook(event: any) {
     this.logger.log('📨 Forwarding webhook event to microservice');
     try {
@@ -117,8 +120,9 @@ async verifyPayment(reference: string) {
     }
   }
 
-    */
 
+    /**
+      live
    async forwardWebhook(payload: any) {
     try {
       this.logger.log(`Sending webhook payload for reference: ${payload?.data?.reference}`);
@@ -134,4 +138,6 @@ async verifyPayment(reference: string) {
       throw err;
     }
   }
+        */
+
 }

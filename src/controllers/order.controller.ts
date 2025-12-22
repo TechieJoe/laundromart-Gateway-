@@ -77,10 +77,10 @@ export class OrderGatewayController {
     }
   }
 
-  /**
-   * Verify transaction by reference (public or protected depending on your design).
-   * This simply forwards verification to the microservice.
   
+    //Verify transaction by reference (public or protected depending on your design).
+    //This simply forwards verification to the microservice.
+   //test
   @Get('verify/:reference')
   async verifyTransaction(@Param('reference') reference: string, @Res() res: Response) {
     try {
@@ -100,7 +100,9 @@ export class OrderGatewayController {
     }
   }
 
-   */
+   
+
+    /**
 
 @Get('verify/:reference')
 async verifyPayment(
@@ -126,6 +128,8 @@ async verifyPayment(
   }
 }
 
+   */
+
 
   @Get('callback')
   async paystackCallback(@Query('reference') reference: string, @Res() res: Response) {
@@ -148,8 +152,8 @@ async verifyPayment(
   }
 }
 
-  /**
-   * Webhook endpoint (should be public and secured via Paystack signature verification in production).
+   //test
+  // Webhook endpoint (should be public and secured via Paystack signature verification in production).
   @Post('webhook')
   async handleWebhook(@Body() event: any, @Res() res: Response) {
     try {
@@ -162,8 +166,9 @@ async verifyPayment(
     }
   }
 
-    */
+   
 
+    /**
 
   @Post('paystack')
   async handlePaystackWebhook(@Body() payload: any, @Res() res: Response) {
@@ -174,6 +179,8 @@ async verifyPayment(
     return res.status(500).send('Internal server error');
   }
  }
+   */
+
 
   
   @Get('notification')
