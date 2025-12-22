@@ -3,14 +3,18 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthGatewayService } from './services/auth.service';
+
 import { AuthGatewayController } from './controllers/auth.controller';
 import { OrderGatewayController } from './controllers/order.controller';
-import { OrderGatewayService } from './services/order.service';
 import { NotificationGatewayController } from './controllers/notification.controller';
+
+import { AuthGatewayService } from './services/auth.service';
+import { OrderGatewayService } from './services/order.service';
 import { NotificationGatewayService } from './services/notification.service';
+
 import { JwtStrategy } from 'utils/jwt';
 
 @Module({
@@ -19,49 +23,48 @@ import { JwtStrategy } from 'utils/jwt';
       isGlobal: true,
     }),
 
-    // Microservices clients using ConfigService (async + env-aware)
     ClientsModule.registerAsync([
       {
         name: 'AUTH_SERVICE',
         imports: [ConfigModule],
+        inject: [ConfigService],
         useFactory: (config: ConfigService) => ({
           transport: Transport.TCP,
           options: {
-            host: config.get<string>('AUTH_SERVICE_HOST') || '127.0.0.1',
-            port: config.get<number>('AUTH_SERVICE_PORT') || 4000,
+            host: config.get<string>('AUTH_SERVICE_HOST'),
+            port: Number(config.get<string>('AUTH_SERVICE_PORT')),
             retryAttempts: 5,
             retryDelay: 1000,
           },
         }),
-        inject: [ConfigService],
-      }, 
+      },
       {
         name: 'ORDER_SERVICE',
         imports: [ConfigModule],
+        inject: [ConfigService],
         useFactory: (config: ConfigService) => ({
           transport: Transport.TCP,
           options: {
-            host: config.get<string>('ORDER_SERVICE_HOST') || '127.0.0.1',
-            port: config.get<number>('ORDER_SERVICE_PORT') || 6000,
+            host: config.get<string>('ORDER_SERVICE_HOST'),
+            port: Number(config.get<string>('ORDER_SERVICE_PORT')),
             retryAttempts: 5,
             retryDelay: 1000,
           },
         }),
-        inject: [ConfigService],
       },
       {
         name: 'NOTIFICATION_SERVICE',
         imports: [ConfigModule],
+        inject: [ConfigService],
         useFactory: (config: ConfigService) => ({
           transport: Transport.TCP,
           options: {
-            host: config.get<string>('NOTIFICATION_SERVICE_HOST') || '127.0.0.1',
-            port: config.get<number>('NOTIFICATION_SERVICE_PORT') || 5000,
+            host: config.get<string>('NOTIFICATION_SERVICE_HOST'),
+            port: Number(config.get<string>('NOTIFICATION_SERVICE_PORT')),
             retryAttempts: 5,
             retryDelay: 1000,
           },
         }),
-        inject: [ConfigService],
       },
     ]),
 
@@ -69,25 +72,27 @@ import { JwtStrategy } from 'utils/jwt';
 
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET', 'your-secret-key'),
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET'),
         signOptions: { expiresIn: '60m' },
       }),
-      inject: [ConfigService],
     }),
   ],
+
   controllers: [
     AppController,
     AuthGatewayController,
     OrderGatewayController,
     NotificationGatewayController,
   ],
+
   providers: [
     AppService,
     AuthGatewayService,
-    JwtStrategy,
     OrderGatewayService,
     NotificationGatewayService,
+    JwtStrategy,
   ],
 })
 export class AppModule {}
