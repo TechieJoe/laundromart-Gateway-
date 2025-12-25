@@ -32,13 +32,10 @@ app.enableCors({
     }),
   );
 
+  app.setGlobalPrefix('laundromart');
   
-  await app.startAllMicroservices();
   await app.listen(3000);
-<<<<<<< HEAD
   app.startAllMicroservices();
   console.log(`🚀 API Gateway running on http://localhost:3000`);
-=======
->>>>>>> 75eaec21ef87b49caace6d432707b86bc3ced6ec
 }
 bootstrap();
