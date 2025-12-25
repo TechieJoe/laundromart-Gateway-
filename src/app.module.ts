@@ -27,8 +27,8 @@ import { JwtStrategy } from 'utils/jwt';
         useFactory: (config: ConfigService) => ({
           transport: Transport.TCP,
           options: {
-            host: config.get<string>('AUTH_SERVICE_HOST') || '127.0.0.1',
-            port: config.get<number>('AUTH_SERVICE_PORT') || 4000,
+            host: config.get<string>('AUTH_SERVICE_HOST'),
+            port: config.get<number>('AUTH_SERVICE_PORT'),
             retryAttempts: 5,
             retryDelay: 1000,
           },
@@ -41,8 +41,8 @@ import { JwtStrategy } from 'utils/jwt';
         useFactory: (config: ConfigService) => ({
           transport: Transport.TCP,
           options: {
-            host: config.get<string>('ORDER_SERVICE_HOST') || '127.0.0.1',
-            port: config.get<number>('ORDER_SERVICE_PORT') || 6000,
+            host: config.get<string>('ORDER_SERVICE_HOST'),
+            port: config.get<number>('ORDER_SERVICE_PORT'),
             retryAttempts: 5,
             retryDelay: 1000,
           },
@@ -55,8 +55,8 @@ import { JwtStrategy } from 'utils/jwt';
         useFactory: (config: ConfigService) => ({
           transport: Transport.TCP,
           options: {
-            host: config.get<string>('NOTIFICATION_SERVICE_HOST') || '127.0.0.1',
-            port: config.get<number>('NOTIFICATION_SERVICE_PORT') || 5000,
+            host: config.get<string>('NOTIFICATION_SERVICE_HOST'),
+            port: config.get<number>('NOTIFICATION_SERVICE_PORT'),
             retryAttempts: 5,
             retryDelay: 1000,
           },
@@ -70,7 +70,7 @@ import { JwtStrategy } from 'utils/jwt';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET', 'your-secret-key'),
+        secret: configService.get<string>('JWT_SECRET'),
         signOptions: { expiresIn: '60m' },
       }),
       inject: [ConfigService],
