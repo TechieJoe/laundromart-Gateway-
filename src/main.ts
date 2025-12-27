@@ -9,11 +9,6 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule); // Cast to NestExpressApplication
   app.use(cookieParser());
 
-  // Configure CORS
-app.enableCors({
-  origin: true,
-  credentials: true,
-});
 
   // Configure EJS
   app.setViewEngine('ejs');
