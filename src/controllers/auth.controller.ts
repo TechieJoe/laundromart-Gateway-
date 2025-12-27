@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Request, Response } from 'express';
 import { HttpException } from '@nestjs/common';
-import { JwtAuthGuard, JwtCookieGuard } from 'utils/jwt';
+import { JwtAuthGuard } from 'utils/jwt';
 import { AuthGatewayService } from 'src/services/auth.service';
 import { LoginDto, RegisterDto } from 'utils/dto/auth';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -77,7 +77,7 @@ export class AuthGatewayController {
     );
   }
 
-  @UseGuards(JwtCookieGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('home')
   @Render('home')
   renderHome(@Req() req: Request) {
@@ -106,7 +106,10 @@ async getProfilePage(@Req() req, @Res() res) {
 
   @Post('logout')
   logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('jwt');
+    res.clearCookie('Authetication', {
+      secure: true,
+      sameSite: 'none',
+    });
     res.redirect('/auth/login');
     return { status: HttpStatus.OK, message: 'Logout successful' };
   }

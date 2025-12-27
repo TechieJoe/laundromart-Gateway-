@@ -7,13 +7,13 @@ import { NotificationGatewayService } from 'src/services/notification.service';
 import { JwtAuthGuard } from 'utils/jwt';
 import { CreateNotificationDto } from 'utils/dto/notification';
 
+@UseGuards(JwtAuthGuard)
 @Controller('notification')
 export class NotificationGatewayController {
   private readonly logger = new Logger(NotificationGatewayController.name);
 
   constructor(private readonly notificationService: NotificationGatewayService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post('create')
   createNotification(@Body() createNotificationDto: CreateNotificationDto, @Req() req: Request): Observable<any> {
     const token = req.cookies?.jwt;
@@ -33,7 +33,6 @@ export class NotificationGatewayController {
     );
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('list')
   getNotifications(@Req() req: Request): Observable<any> {
     const userId = (req.user as any).userId;

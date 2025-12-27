@@ -16,9 +16,9 @@ import {
 import { Request, Response } from 'express';
 import { OrderGatewayService } from 'src/services/order.service';
 import { CreateOrderDto } from 'utils/dto/order';
-import { JwtCookieGuard } from 'utils/jwt';
+import { JwtAuthGuard } from 'utils/jwt';
 
-@UseGuards(JwtCookieGuard) // protect endpoints that require an authenticated user
+@UseGuards(JwtAuthGuard) // protect endpoints that require an authenticated user
 @Controller('order')
 export class OrderGatewayController {
   private readonly logger = new Logger(OrderGatewayController.name);
