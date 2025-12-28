@@ -30,7 +30,6 @@ async function bootstrap() {
   app.setGlobalPrefix('laundromart');
   
   await app.listen(3000);
-  app.startAllMicroservices();
   console.log(`🚀 API Gateway running on http://localhost:3000`);
 }
 bootstrap();
